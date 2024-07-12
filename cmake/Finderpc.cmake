@@ -1,14 +1,14 @@
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(PC_ERPC QUIET erpc)
+# find_package(PkgConfig REQUIRED)
+# pkg_check_modules(PC_ERPC QUIET erpc)
 
 find_library(ERPC_LIBRARY
   NAMES erpc
-  HINTS ${PC_ERPC_LIBDIR}
+  PATHS ${CMAKE_BINARY_DIR}/erpc/lib
 )
 
 find_path(ERPC_INCLUDE_DIR
   NAMES erpc_config.h
-  HINTS ${PC_ERPC_INCLUDEDIR}
+  PATHS ${CMAKE_BINARY_DIR}/erpc/include
   PATH_SUFFIXES erpc
 )
 
