@@ -22,10 +22,10 @@ ExternalProject_Add(my_erpc
 
 add_executable(hello_erpc
 	src/main.cc
-	src/c_erpc_matrix_multiply_client.cpp
-	src/erpc_matrix_multiply_client.cpp
+	src/c_erpc_servo_configure_client.cpp
+	src/erpc_servo_configure_client.cpp
 	# src/erpc_matrix_multiply_common.cpp
-	src/erpc_matrix_multiply_interface.cpp
+	src/erpc_servo_configure_interface.cpp
 )
 add_dependencies(hello_erpc my_erpc)
 

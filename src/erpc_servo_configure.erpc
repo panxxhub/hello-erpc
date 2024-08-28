@@ -1,0 +1,79 @@
+program erpc_servo_configure
+
+
+enum AxisType {
+    D_AXIS = 0,
+    Q_AXIS = 1,
+};
+
+enum AdcType {
+    ADC_VBUS = 0,
+    ADC_IBUS,
+    ADC_TEMP,
+    ADC_CURRENT0,
+    ADC_CURRENT1,
+    ADC_CURRENT2,
+    ADC_VOLTAGE0,
+    ADC_VOLTAGE1,
+    ADC_VOLTAGE2,
+    ADC_MAIN_ENCODER_SIN,
+    ADC_MAIN_ENCODER_COS,
+};
+
+struct DQ {
+    float d;
+    float q;
+};
+
+struct OscDataElement {
+    int16 v_bus;
+    int16[3] v_3d;
+    int16[3] c_3d;
+    uint32 timestamp;
+};
+
+struct PV {
+    float p;
+    float v;
+};
+
+const int32 servo_param_max_size = 256;
+struct SdoSubEntry {
+    int16 sub_index;
+    uint8[servo_param_max_size] data;
+};
+
+const int32 sdo_max_sub_entry_size = 64;
+struct Sdo {
+    int16 index;
+    SdoSubEntry[sdo_max_sub_entry_size] sub_entries;
+};
+
+
+const int32 osc_fragment_max_size = 64;
+struct OscDataFragment {
+	int16 id;
+	OscDataElement[osc_fragment_max_size] data;
+};
+
+const double velocity_to_rmp_ratio = 0.22731684623067849315702915191650390625;
+struct MainEncoderInfo
+{
+    uint64 timestamp;
+    int32 velocity;
+    int32 single_turn;
+    int16 single_turn_width;
+    int32 multi_turn;
+};
+
+interface ServoConfigureService {
+    //   axisAlign(in AxisType axis) -> void
+    //   getAdcRawAvg(in AdcType adcType, out float adcAvgValue) -> int32
+    //   setCurrentLoopRef(in DQ current) -> void
+    //   exciteAndCapture(in int16 id, out OscDataFragment fragment) -> int32
+    //   setSdo(in Sdo sdo) -> int32
+    //   getSdoByIndex(in int16 index, out Sdo sdo) -> int32
+    //   setSdoSubEntry(in int16 index, in SdoSubEntry subEntry) -> int32
+    getSdoSubEntry(in int16 index, in int16 subIndex, out SdoSubEntry subEntry) -> int32
+    //   getMainEncoderInfo(out MainEncoderInfo info) -> void
+}
