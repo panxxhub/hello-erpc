@@ -39,14 +39,14 @@ struct PV {
 
 const int32 servo_param_max_size = 8;
 struct SdoSubEntry {
-    int16 sub_index;
+    uint8 sub_index;
     uint32 bitsize;
     uint8[servo_param_max_size] data;
 };
 
 const int32 sdo_max_sub_entry_size = 64;
 struct Sdo {
-    int16 index;
+    uint16 index;
     SdoSubEntry[sdo_max_sub_entry_size] sub_entries;
 };
 
@@ -74,7 +74,11 @@ interface ServoConfigureService {
     //   exciteAndCapture(in int16 id, out OscDataFragment fragment) -> int32
     //   setSdo(in Sdo sdo) -> int32
     //   getSdoByIndex(in int16 index, out Sdo sdo) -> int32
-    //   setSdoSubEntry(in int16 index, in SdoSubEntry subEntry) -> int32
-    getSdoSubEntry(in int16 index, in int16 subIndex, out SdoSubEntry subEntry) -> int32
+    setSdoSubEntry(in uint16 index, in SdoSubEntry subEntry) -> int32
+    sdoLoadFactorySettings() -> int32
+    sdoEntryLoadFactorySettings(in uint16 index) -> int32
+    sdoSubEntryLoadFactorySettings(in uint16 index, in uint8 subIndex) -> int32
+    getSdoSubEntry(in uint16 index, in uint8 subIndex, out SdoSubEntry subEntry) -> int32
+    saveAllToNonVolatileMemory() -> int32
     //   getMainEncoderInfo(out MainEncoderInfo info) -> void
 }
