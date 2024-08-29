@@ -15,7 +15,7 @@ int main(void) {
    * matrix2 random matrix
    */
 
-  auto transport = erpc_transport_serial_init("/dev/ttyUSB0", 921600);
+  auto transport = erpc_transport_serial_init("/dev/ttyUSB0", 115200);
   erpc_mbf_t message_buffer_factory = erpc_mbf_dynamic_init();
 
   auto *client = erpc_client_init(transport, message_buffer_factory);
@@ -24,12 +24,21 @@ int main(void) {
       new erpcShim::ServoConfigureService_client(
           reinterpret_cast<erpc::ClientManager *>(client)));
 
-  // erpcMatrixMultiply(matrix1, matrix2, result_matrix);
-  // my_client->getS(matrix1, matrix2,
-  //  result_matrix);
   SdoSubEntry subEntry = {0};
-  my_client->getSdoSubEntry(0x3100, 0, &subEntry);
+  for (int i = 0; i < 100; i++) {
+    int ret = my_client->getSdoSubEntry(0x3100, 0, &subEntry);
 
+    sleep(1);
+    if (ret != 0) {
+      printf("Error: %d\n", ret);
+      // return 1;
+      continue;
+    }
+
+    int32_t value = 0;
+    memcpy(&value, subEntry.data, sizeof(int32_t));
+    printf("Value: %d\n", value);
+  }
   erpc_client_deinit(client);
 
   erpc_mbf_dynamic_deinit(message_buffer_factory);

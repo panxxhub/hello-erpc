@@ -37,7 +37,7 @@ struct PV {
     float v;
 };
 
-const int32 servo_param_max_size = 256;
+const int32 servo_param_max_size = 8;
 struct SdoSubEntry {
     int16 sub_index;
     uint8[servo_param_max_size] data;
