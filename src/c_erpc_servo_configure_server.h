@@ -5,16 +5,17 @@
  */
 
 
-#if !defined(_c_erpc_servo_configure_client_h_)
-#define _c_erpc_servo_configure_client_h_
+#if !defined(_c_erpc_servo_configure_server_h_)
+#define _c_erpc_servo_configure_server_h_
 
 #include "erpc_servo_configure_common.h"
-#include "erpc_client_manager.h"
 
 #if defined(__cplusplus)
 extern "C"
 {
 #endif
+
+typedef void * erpc_service_t;
 
 #if !defined(ERPC_FUNCTIONS_DEFINITIONS)
 #define ERPC_FUNCTIONS_DEFINITIONS
@@ -32,14 +33,18 @@ enum _ServoConfigureService_ids
 int32_t getSdoSubEntry(int16_t index, int16_t subIndex, SdoSubEntry * subEntry);
 //@}
 
+
 #endif // ERPC_FUNCTIONS_DEFINITIONS
 
-void initServoConfigureService_client(erpc_client_t client);
+/*! @brief Return ServoConfigureService_service service object. */
+erpc_service_t create_ServoConfigureService_service(void);
 
-void deinitServoConfigureService_client(void);
+/*! @brief Destroy ServoConfigureService_service service object. */
+void destroy_ServoConfigureService_service(erpc_service_t service);
+
 
 #if defined(__cplusplus)
 }
 #endif
 
-#endif // _c_erpc_servo_configure_client_h_
+#endif // _c_erpc_servo_configure_server_h_

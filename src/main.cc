@@ -25,18 +25,24 @@ int main(void) {
           reinterpret_cast<erpc::ClientManager *>(client)));
 
   SdoSubEntry subEntry = {0};
-  for (int i = 0; i < 100; i++) {
-    int ret = my_client->getSdoSubEntry(0x3100, 0, &subEntry);
 
-    sleep(1);
+  for (int j = 0; j < 10000; j++) {
+
+    int idx = 0x3110 + (j % 9);
+    int ret = my_client->getSdoSubEntry(idx, 0, &subEntry);
     if (ret != 0) {
       printf("Error: %d\n", ret);
-      // return 1;
-      continue;
+      return 1;
     }
-
     int32_t value = 0;
-    memcpy(&value, subEntry.data, sizeof(int32_t));
+    size_t copy_size = subEntry.bitsize / 8;
+    if (copy_size == 0) {
+      copy_size = 1;
+    }
+    memcpy(&value, subEntry.data, copy_size);
+
+    value = value & ((1 << subEntry.bitsize) - 1);
+
     printf("Value: %d\n", value);
   }
   erpc_client_deinit(client);
