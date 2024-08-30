@@ -6,18 +6,18 @@ enum AxisType {
     Q_AXIS = 1,
 };
 
-enum AdcType {
-    ADC_VBUS = 0,
-    ADC_IBUS,
-    ADC_TEMP,
-    ADC_CURRENT0,
-    ADC_CURRENT1,
-    ADC_CURRENT2,
-    ADC_VOLTAGE0,
-    ADC_VOLTAGE1,
-    ADC_VOLTAGE2,
-    ADC_MAIN_ENCODER_SIN,
-    ADC_MAIN_ENCODER_COS,
+enum ErpcAdcType {
+    ERPC_ADC_VBUS = 0,
+    ERPC_ADC_IBUS,
+    ERPC_ADC_TEMP,
+    ERPC_ADC_CURRENT0,
+    ERPC_ADC_CURRENT1,
+    ERPC_ADC_CURRENT2,
+    ERPC_ADC_VOLTAGE0,
+    ERPC_ADC_VOLTAGE1,
+    ERPC_ADC_VOLTAGE2,
+    ERPC_ADC_MAIN_ENCODER_SIN,
+    ERPC_ADC_MAIN_ENCODER_COS,
 };
 
 struct DQ {
@@ -67,18 +67,28 @@ struct MainEncoderInfo
     int32 multi_turn;
 };
 
+
 interface ServoConfigureService {
     //   axisAlign(in AxisType axis) -> void
-    //   getAdcRawAvg(in AdcType adcType, out float adcAvgValue) -> int32
+    getAdcRaw(in ErpcAdcType adcType, out int32 value) -> int32
+    getAdcSinCosRaw(out int32 sin, out int32 cos) -> int32
+    getAdcCurrentRaw(out int32 a, out int32 b, out int32 c) -> int32
+    getAdcVoltageRaw(out int32 a, out int32 b, out int32 c) -> int32
+
     //   setCurrentLoopRef(in DQ current) -> void
     //   exciteAndCapture(in int16 id, out OscDataFragment fragment) -> int32
     //   setSdo(in Sdo sdo) -> int32
     //   getSdoByIndex(in int16 index, out Sdo sdo) -> int32
-    setSdoSubEntry(in uint16 index, in SdoSubEntry subEntry) -> int32
     sdoLoadFactorySettings() -> int32
     sdoEntryLoadFactorySettings(in uint16 index) -> int32
     sdoSubEntryLoadFactorySettings(in uint16 index, in uint8 subIndex) -> int32
+
+    setSdoSubEntry(in uint16 index, in SdoSubEntry subEntry) -> int32
     getSdoSubEntry(in uint16 index, in uint8 subIndex, out SdoSubEntry subEntry) -> int32
+
     saveAllToNonVolatileMemory() -> int32
-    //   getMainEncoderInfo(out MainEncoderInfo info) -> void
+    loadAllFromNonVolatileMemory() -> int32
+
+    sdoSubEntrySaveToNonVolatileMemory(in uint16 index, in uint8 subIndex) -> int32
+    sdoSubEntryLoadFromNonVolatileMemory(in uint16 index, in uint8 subIndex) -> int32
 }

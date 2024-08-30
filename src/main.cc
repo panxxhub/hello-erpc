@@ -1,3 +1,4 @@
+#include "c_erpc_servo_configure_client.h"
 #include "erpc_mbf_setup.h"
 #include "erpc_servo_configure_client.hpp"
 #include "erpc_servo_configure_common.hpp"
@@ -26,28 +27,57 @@ int main(void) {
 
   SdoSubEntry subEntry = {0};
 
-  for (int j = 0; j < 10000; j++) {
-
-    int idx = 0x3110 + (j % 9);
-    int ret = my_client->getSdoSubEntry(idx, 0, &subEntry);
-    if (ret != 0) {
-      printf("Error: %d\n", ret);
-      return 1;
-    }
-    int32_t value = 0;
-    size_t copy_size = subEntry.bitsize / 8;
-    if (copy_size == 0) {
-      copy_size = 1;
-    }
-    memcpy(&value, subEntry.data, copy_size);
-
-    value = value & ((1 << subEntry.bitsize) - 1);
-
-    printf("Value: %d\n", value);
+  int ret = my_client->getSdoSubEntry(0x3110, 0, &subEntry);
+  size_t copy_size = subEntry.bitsize / 8;
+  if (copy_size == 0) {
+    copy_size = 1;
   }
+
+  int32_t value = 0;
+  memcpy(&value, subEntry.data, copy_size);
+  value = value & ((1 << subEntry.bitsize) - 1);
+
+  printf("Value: %d\n", value);
+
+  int32_t c0 = 0;
+  int width = my_client->getAdcRaw(ERPC_ADC_CURRENT0, &c0);
+  if (width < 0) {
+    printf("Error: %d\n", width);
+    ret = 1;
+    goto fail_or_default;
+  }
+  printf("Current0: %d, Width: %d\n", c0, width);
+
+  width = my_client->getAdcRaw(ERPC_ADC_CURRENT1, &c0);
+  if (width < 0) {
+    printf("Error: %d\n", width);
+    ret = 1;
+    goto fail_or_default;
+  }
+  printf("Current1: %d, Width: %d\n", c0, width);
+
+  width = my_client->getAdcRaw(ERPC_ADC_CURRENT2, &c0);
+  if (width < 0) {
+    printf("Error: %d\n", width);
+    ret = 1;
+    goto fail_or_default;
+  }
+  printf("Current2: %d, Width: %d\n", c0, width);
+
+//     for (int j = 0; j < 10000; j++) {
+
+//   int idx = 0x3110 + (j % 9);
+//   if (ret != 0) {
+//     printf("Error: %d\n", ret);
+//     return 1;
+//   }
+
+//   printf("Value: %d\n", value);
+// }
+fail_or_default:
   erpc_client_deinit(client);
 
   erpc_mbf_dynamic_deinit(message_buffer_factory);
 
-  return 0;
+  return ret;
 }
