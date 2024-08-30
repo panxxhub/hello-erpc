@@ -64,16 +64,22 @@ int main(void) {
   }
   printf("Current2: %d, Width: %d\n", c0, width);
 
-//     for (int j = 0; j < 10000; j++) {
+  width = my_client->getAdcRaw(ERPC_ADC_MAIN_ENCODER_SIN, &c0);
+  if (width < 0) {
+    printf("Error: %d\n", width);
+    ret = 1;
+    goto fail_or_default;
+  }
+  printf("Main Encoder Sin: %d, Width: %d\n", c0, width);
 
-//   int idx = 0x3110 + (j % 9);
-//   if (ret != 0) {
-//     printf("Error: %d\n", ret);
-//     return 1;
-//   }
+  width = my_client->getAdcRaw(ERPC_ADC_MAIN_ENCODER_COS, &c0);
+  if (width < 0) {
+    printf("Error: %d\n", width);
+    ret = 1;
+    goto fail_or_default;
+  }
+  printf("Main Encoder Cos: %d, Width: %d\n", c0, width);
 
-//   printf("Value: %d\n", value);
-// }
 fail_or_default:
   erpc_client_deinit(client);
 
